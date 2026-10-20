@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tilawah Dunia — qari, qiraat, dan kajian fiqih</title>
+  <meta name="description" content="Dengarkan murottal dari qari berbagai negara dalam qiraat yang berbeda, dan temukan kajian fiqih dari para ustadz.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Filter goresan tangan, dipakai oleh semua ilustrasi lembar -->
+  <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <filter id="rough" filterUnits="userSpaceOnUse" x="0" y="0" width="400" height="520">
+        <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="2.6"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <a class="skip" href="#baca">Lewati ke bacaan Al-Qur'an</a>
+
+  <header class="top">
+    <a class="brand" href="#buku">Tilawah Dunia</a>
+    <nav aria-label="Navigasi utama">
+      <a href="#buku">Imam qiraat</a>
+      <a href="#baca">Mushaf Al quran</a>
+      <a href="#qiraat">Tentang qiraat</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ================= BUKU QARI ================= -->
+    <section class="hero" id="buku" aria-labelledby="judul">
+      <div class="hero-head">
+        <h1 id="judul">Satu Al-Qur'an, banyak cara baca.</h1>
+        <p class="lede">Buku sketsa berisi lembar-lembar qari dari berbagai negeri. Balik halaman, pilih riwayat dan surah, lalu dengarkan.</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="filters" role="group" aria-label="Filter kelompok qiraat" id="filters"></div>
+        <div class="lens-ctl" role="group" aria-label="Kaca pembesar">
+          <button type="button" class="btn ghost" id="lensToggle" aria-pressed="false">Kaca pembesar</button>
+          <button type="button" class="btn ghost sq" id="zoomOut" aria-label="Perkecil pembesaran" disabled>−</button>
+          <output id="zoomVal" aria-live="polite">2×</output>
+          <button type="button" class="btn ghost sq" id="zoomIn" aria-label="Perbesar pembesaran" disabled>+</button>
+        </div>
+      </div>
+
+      <div class="stage" id="stage">
+        <div class="units book" id="book" aria-label="Buku qari"></div>
+        <div class="units m mobile-book" id="mobile" aria-label="Lembar qari"></div>
+        <div class="lens" id="lens" hidden>
+          <div class="lens-glass" id="lensGlass"></div>
+        </div>
+      </div>
+
+      <div class="pager">
+        <button type="button" class="btn ghost" id="prevPage">Sebelumnya</button>
+        <p id="pageLabel" aria-live="polite">Lembar 1 dari 8</p>
+        <button type="button" class="btn ghost" id="nextPage">Berikutnya</button>
+      </div>
+      <p class="hint">Tips: tombol panah kiri/kanan juga membalik halaman.</p>
+
+      <p class="notice" id="notice" role="status" hidden></p>
+
+      <nav class="toc" aria-labelledby="tocTitle">
+        <h2 id="tocTitle">Daftar isi</h2>
+        <ol id="toc"></ol>
+      </nav>
+    </section>
+
+    <!-- ================= BACA AL-QUR'AN ================= -->
+    <section class="sheet" id="baca" aria-labelledby="bacaTitle">
+      <div class="sheet-inner">
+        <div class="sheet-head">
+          <h2 id="bacaTitle">Baca Al-Qur'an</h2>
+          <p>Teks Al-Qur'an 30 juz dengan terjemahan Bahasa Indonesia dari Kementerian Agama, sebagai bahan rujukan, disajikan dalam kartu geser agar ringkas. Untuk mushaf resmi dan tafsirnya, buka <a href="https://quran.kemenag.go.id/" target="_blank" rel="noopener noreferrer">Qur'an Kemenag</a>.</p>
+        </div>
+
+        <div class="view-switch" role="group" aria-label="Pilih tampilan Al-Qur'an">
+          <button type="button" id="viewText" aria-pressed="true">
+            <strong>Al-Qur'an dan terjemah</strong><span>per juz atau per surah</span>
+          </button>
+          <button type="button" id="viewMushaf" aria-pressed="false">
+            <strong>Mushaf Madinah 3D</strong><span>604 halaman, tanpa terjemah</span>
+          </button>
+        </div>
+
+        <div id="textView">
+        <div class="reader-bar" id="readerBar">
+          <div class="seg" role="group" aria-label="Cara memilih bacaan">
+            <button type="button" id="modeJuz" aria-pressed="true">Per juz</button>
+            <button type="button" id="modeSurah" aria-pressed="false">Per surah</button>
+          </div>
+          <div class="reader-opts">
+            <label class="chk"><input type="checkbox" id="optTr" checked> Terjemahan</label>
+            <label class="chk"><input type="checkbox" id="optLatin"> Transliterasi</label>
+            <div class="fs" role="group" aria-label="Ukuran huruf Arab">
+              <button type="button" id="fsMinus" aria-label="Perkecil huruf Arab">A−</button>
+              <button type="button" id="fsPlus" aria-label="Perbesar huruf Arab">A+</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="juzPick" class="juz-grid" role="group" aria-label="Pilih juz"></div>
+        <div id="surahPick" class="surah-pick" hidden>
+          <label for="surahSelect">Surah</label>
+          <select id="surahSelect"></select>
+        </div>
+
+        <p class="range" id="readerRange" aria-live="polite"></p>
+        <div class="reader-wrap">
+          <div class="reader" id="reader" tabindex="-1"></div>
+          <button type="button" class="slide-nav prev" id="slidePrev" aria-label="Bagian sebelumnya">‹</button>
+          <button type="button" class="slide-nav next" id="slideNext" aria-label="Bagian berikutnya">›</button>
+        </div>
+        <p class="slide-count" id="slideCount" aria-live="polite"></p>
+
+        <div class="reader-nav">
+          <button type="button" class="btn-line" id="rPrev">Sebelumnya</button>
+          <button type="button" class="btn-line" id="rNext">Berikutnya</button>
+        </div>
+        </div>
+
+        <div id="mushafView" hidden>
+          <div class="mushaf-bar">
+            <label>Juz <select id="mJuz"></select></label>
+            <label>Surah <select id="mSurah"></select></label>
+            <label>Halaman <input type="number" id="mPage" min="1" max="604" inputmode="numeric"></label>
+            <button type="button" class="btn-line" id="mGo">Buka</button>
+            <button type="button" class="btn-line" id="mFull" hidden>Layar penuh</button>
+          </div>
+
+          <div class="mstage" id="mStage">
+            <div class="mbook" id="mBook" aria-label="Mushaf Madinah"></div>
+            <div class="mmobile" id="mMobile" aria-label="Halaman mushaf"></div>
+          </div>
+
+          <div class="mnav">
+            <button type="button" class="btn-line" id="mPrev">Halaman sebelumnya →</button>
+            <p id="mLabel" aria-live="polite">Halaman 1 dari 604</p>
+            <button type="button" class="btn-line" id="mNext">← Halaman berikutnya</button>
+          </div>
+          <p class="mhint">Mushaf dibaca dari kanan ke kiri: klik halaman kiri atau tombol panah kiri untuk maju, klik halaman kanan atau panah kanan untuk mundur. Di HP, geser ke kanan untuk halaman berikutnya.</p>
+          <p class="fine mfine">Pembagian ayat pada tiap halaman mengikuti Mushaf Madinah (604 halaman, riwayat Hafs). Teksnya disusun ulang dari data Utsmani, sehingga letak baris dan hiasan bingkai tidak sama persis dengan cetakan Mujamma' Malik Fahd. Untuk tampilan cetak resmi, buka mushaf digitalnya.</p>
+        </div>
+
+        <p class="fine" id="sourceNote">Teks Arab (Utsmani) berasal dari The Noble Qur'an Encyclopedia, dan terjemahan Bahasa Indonesia dari Kementerian Agama RI. Keduanya dimuat dari paket <a href="https://github.com/risan/quran-json" target="_blank" rel="noopener noreferrer">quran-json</a> (CC BY-SA 4.0) lewat jsDelivr, bukan langsung dari situs Kemenag. Ejaan dan penandaan ayat dapat sedikit berbeda dari Mushaf Standar Indonesia di <a href="https://quran.kemenag.go.id/" target="_blank" rel="noopener noreferrer">quran.kemenag.go.id</a>; rujuklah situs itu untuk mushaf resmi dan tafsir.</p>
+      </div>
+    </section>
+    <section class="sheet" id="qiraat" aria-labelledby="qiraatTitle">
+      <div class="sheet-inner">
+        <div class="sheet-head">
+          <h2 id="qiraatTitle">Tentang qiraat</h2>
+          <p>Satu Al-Qur'an, beberapa cara baca yang sanadnya bersambung sampai Rasulullah shallallahu 'alaihi wa sallam. Kebanyakan dari kita mendengar riwayat Hafs 'an 'Ashim; lembar-lembar di atas memperkenalkan yang lain.</p>
+        </div>
+        <dl class="qiraat-list">
+          <div>
+            <dt><span class="tag sabah">Sab'ah</span> Qiraat as-Sab'ah</dt>
+            <dd>Tujuh imam: Nafi' al-Madani, Ibnu Katsir al-Makki, Abu 'Amr al-Bashri, Ibnu 'Amir asy-Syami, 'Ashim al-Kufi, Hamzah al-Kufi, dan al-Kisa'i al-Kufi. Riwayat yang paling dikenal: Hafs 'an 'Ashim (dominan di Indonesia dan Timur Tengah), Warsh dan Qalun 'an Nafi' (Maghrib, Afrika Barat, Libya, Tunisia, Qatar), serta ad-Duri 'an Abu 'Amr (terutama Sudan).</dd>
+          </div>
+          <div>
+            <dt><span class="tag asyrah">'Asyrah</span> Qiraat al-'Asyrah</dt>
+            <dd>Tujuh imam di atas ditambah tiga: Abu Ja'far al-Madani, Ya'qub al-Hadhrami, dan Khalaf al-'Asyir. Rekamannya jauh lebih sedikit, sehingga di buku ini hanya ada beberapa lembar.</dd>
+          </div>
+          <div>
+            <dt><span class="tag arbaah">Arba' 'Asyarah</span> Qiraat al-Arba' 'Asyarah</dt>
+            <dd>Qiraat sepuluh ditambah empat imam: Al-Hasan al-Bashri, Ibnu Muhaishin, Yahya al-Yazidi, dan Al-A'masy. Umumnya ulama menggolongkan empat yang terakhir sebagai qiraat syadz, sehingga rekaman audionya sangat jarang. Karena itu lembarnya berisi keterangan saja.</dd>
+          </div>
+        </dl>
+        <p class="fine">Penggolongan di atas mengikuti penjelasan yang umum dalam ilmu qiraat. Untuk tugas kuliah, sebaiknya cocokkan dengan buku pegangan atau dosen pengampu.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Audio murottal dimuat dari katalog <a href="https://www.mp3quran.net" target="_blank" rel="noopener noreferrer">mp3quran.net</a>; teks dan terjemahan Al-Qur'an dari quran-json (terjemahan Kemenag). Keduanya memerlukan koneksi internet. Font Amiri Quran (SIL OFL). Proyek belajar HTML, CSS, dan JavaScript.</p>
+  </footer>
+
+  <!-- ================= PEMUTAR ================= -->
+  <div class="player" id="player" role="region" aria-label="Pemutar murottal">
+    <div class="np">
+      <span class="badge" id="npBadge" aria-hidden="true">—</span>
+      <div class="np-text">
+        <strong id="npTitle">Belum ada yang diputar</strong>
+        <span id="npSub">Pilih qari dan surah di buku, lalu tekan Putar.</span>
+      </div>
+    </div>
+
+    <div class="ctrl">
+      <div class="btns">
+        <button type="button" class="round" id="prevBtn" aria-label="Surah sebelumnya" disabled>
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 5h2v14H6zM20 5v14L9.5 12z" fill="currentColor"/></svg>
+        </button>
+        <button type="button" class="round main" id="playBtn" aria-label="Putar" disabled>
+          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" id="playIcon"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+        </button>
+        <button type="button" class="round" id="nextBtn" aria-label="Surah berikutnya" disabled>
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M16 5h2v14h-2zM4 5v14l10.5-7z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <div class="seek">
+        <span id="tCur">0:00</span>
+        <input type="range" id="seek" min="0" max="1000" value="0" aria-label="Posisi bacaan" disabled>
+        <span id="tDur">0:00</span>
+      </div>
+    </div>
+
+    <div class="extra">
+      <label>Kecepatan
+        <select id="speed">
+          <option value="0.75">0,75×</option>
+          <option value="1" selected>1×</option>
+          <option value="1.25">1,25×</option>
+          <option value="1.5">1,5×</option>
+        </select>
+      </label>
+      <button type="button" class="chip-btn" id="repeatBtn" aria-pressed="false">Ulangi surah</button>
+      <label>Suara
+        <input type="range" id="vol" min="0" max="1" step="0.05" value="0.9">
+      </label>
+    </div>
+  </div>
+  <audio id="audio" preload="none"></audio>
+
+  <dialog id="clipDialog" aria-label="Pemutar klip kajian">
+    <form method="dialog" class="dlg-head">
+      <strong id="clipTitle">Klip</strong>
+      <button class="btn ghost" value="close">Tutup</button>
+    </form>
+    <div class="dlg-body"><iframe id="clipFrame" title="Klip kajian" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
+  </dialog>
+
+  <noscript><p class="noscript"></p></noscript>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/mushaf.js"></script>
+  <script src="js/library.js"></script>
+</body>
+</html>
